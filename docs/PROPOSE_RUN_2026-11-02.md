@@ -92,6 +92,6 @@ Across six calls: 18 of 18 quoted rules verbatim, no subject matches (no "car" f
 
 Propose stays off on Vercel (`PROPOSE_ENABLED` unset); the product picks by hand. Judgment on shipping it on is Malik's.
 
-## Verdict (Malik, 2026-11-02 19:2x PST): "关闭上线"
+## Verdict (Malik, 2026-11-02 21:12 PST): "关闭上线"
 
 Propose ships **off**. Both sealed sets fail as written (0 of 3, then 1 of 3 intents). `PROPOSE_ENABLED` stays unset on Vercel; `/api/propose` answers `enabled: false` and the product offers picking by hand. The code, the prompt, the schema and this record stay in place so a later run can be compared to these two. What would change the verdict: a proposer that returns the designer's dark-skin accent rule (g2) and entry hierarchy (calmmouse) for a many-entries list, and the reading-surface rule (Lissitzky's palette) for a reader, without losing the verbatim-quote discipline.
