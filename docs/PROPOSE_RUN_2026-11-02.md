@@ -95,3 +95,7 @@ Propose stays off on Vercel (`PROPOSE_ENABLED` unset); the product picks by hand
 ## Verdict (Malik, 2026-11-02 21:12 PST): "关闭上线"
 
 Propose ships **off**. Both sealed sets fail as written (0 of 3, then 1 of 3 intents). `PROPOSE_ENABLED` stays unset on Vercel; `/api/propose` answers `enabled: false` and the product offers picking by hand. The code, the prompt, the schema and this record stay in place so a later run can be compared to these two. What would change the verdict: a proposer that returns the designer's dark-skin accent rule (g2) and entry hierarchy (calmmouse) for a many-entries list, and the reading-surface rule (Lissitzky's palette) for a reader, without losing the verbatim-quote discipline.
+
+## Verdict updated (Malik, 2026-11-02 21:35 PST, via the "Tearsheet 现状总结" session, quoted verbatim): 「开启，按 P9 (Recommended)」
+
+Propose ships **ON with the hand-pick fallback**, per spec v2 P9 (`10_SPEC_1.md`, 21:24): "Two sealed runs: 18/18 quoted rules verbatim, no subject matches, stable picks across runs, but only 1/3 intents matched the designer's picks … Re-run the sealed v2 set once with a designer's lean (concert: dark + one accent; reader: text-heavy + left-aligned) and record the result, whatever it is." This supersedes the 21:12 verdict above; both are kept. `PROPOSE_ENABLED=1` is set on Vercel by that session once its proposal-card change is merged. Run 3 (the lean) is a new experiment: the prompt changes, so a new prompt sha, a new sealed set and a fresh go precede it; the v1 and v2 results stay as the baseline.
