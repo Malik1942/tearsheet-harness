@@ -39,6 +39,10 @@ One call per `## Intent:` heading, in file order; the harness call guard caps a 
 
 No re-runs after a miss: a second attempt on the same intent is a different experiment and is recorded as one.
 
+## Lean (spec v3, run 3)
+
+The product lets the designer lean a proposal with chips (dark, airy, one accent, text-heavy, big titles, left-aligned, two colors, grid) and an optional anchor brick. The prompt gets a third placeholder, `{{LEAN}}`, glued to the end of the "Do not pick the same brick twice." line; with no lean it is empty and the rendering is byte-identical to the lean-less prompt (checked 2026-11-02). Chips become parameter families in a "Lean." paragraph (no chip word reaches the model); `dark` becomes "Also prefer these bricks" with the ids whose rule text names a dark ground (on the samples: bauhaus, g2, secession); an anchor adds an "Anchor." paragraph, is never a valid pick, and caps the picks at two. In a sealed set the lean goes on a `Lean:` line right under the intent heading (`Lean: none` for no lean) and an optional `Anchor:` line; those two lines are the only part of the file read before the call. `fixtures/propose_notes_v3.md` is the v2 set with the spec v3 §7 leans: `NOTES=fixtures/propose_notes_v3.md OUT_DIR=out/propose_v3 scripts/propose.sh --send`.
+
 ## 3. Judge
 
 Per intent: PASS when `sealed.pass` is true. The set passes when at least two of the three intents pass (sealed notes, 2026-11-02). Record the outcome in `docs/PROPOSE_RUN_<date>.md`, and in the product set `PROPOSE_ENABLED=1` on Vercel only after that.

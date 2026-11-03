@@ -28,6 +28,19 @@ SCHEMA_FILE = ROOT / "fixtures" / "schemas" / "propose.json"
 LIBRARY_DIR = ROOT.parent / "bricks" / "src" / "fixtures" / "samples"
 MAX_INTENT_CHARS = 300
 
+# Lean (spec v3): chips the designer set on the project, turned into parameter families; no chip word reaches the prompt.
+CHIP_FAMILIES: dict[str, list[str]] = {
+    "dark": [],  # by brick ids instead (DARK_RE over the rule text)
+    "airy": ["density"],
+    "one accent": ["accent_coverage"],
+    "text-heavy": ["image_text_dominance", "hierarchy_mode"],
+    "big titles": ["type_scale_ratio"],
+    "left-aligned": ["alignment_edge"],
+    "two colors": ["palette_hue_count"],
+    "grid": ["rhythm"],
+}
+DARK_RE = re.compile(r"\b(dark|near-black|black)\s+(ground|field|background|base|surround)\b|\bdarkness cover(s|ing)\b", re.I)
+
 
 def load_library(directory: Path) -> list[dict[str, Any]]:
     """What the product sends (proposeClient.libraryFor): ready bricks, not superseded, at most three rules each."""
@@ -42,10 +55,45 @@ def load_library(directory: Path) -> list[dict[str, Any]]:
     return library
 
 
-def render_prompt(template: str, intent: str, library: list[dict[str, Any]]) -> str:
-    # Same two substitutions as the product (propose.ts renderPrompt); JSON.stringify(x, null, 1) == json.dumps(indent=1).
-    return template.replace("{{INTENT}}", intent.replace('"', "”")).replace(
-        "{{LIBRARY}}", json.dumps(library, indent=1, ensure_ascii=False))
+def dark_ids(library: list[dict[str, Any]]) -> list[str]:
+    """Bricks with at least one rule whose text names a dark ground (library order)."""
+    return [b["brick_id"] for b in library if any(DARK_RE.search(r["rule"]) for r in b["rules"])]
+
+
+def render_lean(chips: list[str], anchor: str | None, library: list[dict[str, Any]]) -> str:
+    """The {{LEAN}} text, exactly as the product builds it; '' when there is no lean (then the rendering equals the lean-less prompt)."""
+    unknown = [c for c in chips if c not in CHIP_FAMILIES]
+    if unknown:
+        raise SystemExit(f"unknown lean chip(s): {unknown}; known: {list(CHIP_FAMILIES)}")
+    # Canonical order (the table's order, duplicates removed), as the product sorts before rendering: never click order.
+    order = list(CHIP_FAMILIES)
+    chips = sorted(set(chips), key=order.index)
+    families: list[str] = []
+    for c in chips:
+        for f in CHIP_FAMILIES[c]:
+            if f not in families:
+                families.append(f)
+    out = ""
+    if families:
+        out += ("\n\nLean. The designer asked to lean the choice toward rules that set these layout parameters: "
+                + ", ".join(families) + ". Prefer picks whose quoted rule maps to one of them, when such a rule serves what they are making.")
+    if "dark" in chips:
+        ids = dark_ids(library)
+        if ids:
+            out += "\n\nAlso prefer these bricks when they serve what they are making: " + ", ".join(ids) + "."
+    if anchor:
+        out += (f"\n\nAnchor. The designer has already chosen brick \"{anchor}\" as the starting point. Do not pick it. "
+                "Pick at most two other bricks whose rules work with it.")
+    return out
+
+
+def render_prompt(template: str, intent: str, library: list[dict[str, Any]], lean: str = "") -> str:
+    # Same substitutions as the product (propose.ts renderPrompt): {{LEAN}} first, then {{INTENT}}, then {{LIBRARY}};
+    # JSON.stringify(x, null, 1) == json.dumps(indent=1). A template without {{LEAN}} is accepted when the lean is empty.
+    if "{{LEAN}}" not in template and lean:
+        raise SystemExit("the prompt file has no {{LEAN}} placeholder but a lean was given")
+    return (template.replace("{{LEAN}}", lean).replace("{{INTENT}}", intent.replace('"', "”"))
+            .replace("{{LIBRARY}}", json.dumps(library, indent=1, ensure_ascii=False)))
 
 
 def build_request(prompt: str, schema: dict[str, Any], effort: str, max_output_tokens: int) -> dict[str, Any]:
@@ -59,14 +107,18 @@ def build_request(prompt: str, schema: dict[str, Any], effort: str, max_output_t
     }
 
 
-def validate_picks(raw: list[dict[str, Any]], library: list[dict[str, Any]]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+def validate_picks(raw: list[dict[str, Any]], library: list[dict[str, Any]], anchor: str | None = None) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     by_id = {b["brick_id"]: b for b in library}
     picks: list[dict[str, str]] = []
     dropped: list[dict[str, str]] = []
+    cap = 2 if anchor else 3
     for p in raw:
         brick = by_id.get(p.get("brick_id"))
         if brick is None:
             dropped.append({"brick_id": str(p.get("brick_id")), "reason": "not a brick in the library"})
+            continue
+        if anchor and p["brick_id"] == anchor:
+            dropped.append({"brick_id": p["brick_id"], "reason": "already chosen by the designer"})
             continue
         if any(x["brick_id"] == p["brick_id"] for x in picks):
             dropped.append({"brick_id": p["brick_id"], "reason": "picked twice"})
@@ -75,8 +127,8 @@ def validate_picks(raw: list[dict[str, Any]], library: list[dict[str, Any]]) -> 
         if not any(r["rule"].strip() == quote for r in brick["rules"]):
             dropped.append({"brick_id": p["brick_id"], "reason": "the reason does not quote one of its rules verbatim"})
             continue
-        if len(picks) >= 3:
-            dropped.append({"brick_id": p["brick_id"], "reason": "more than three picks"})
+        if len(picks) >= cap:
+            dropped.append({"brick_id": p["brick_id"], "reason": "more than two picks besides the anchor" if anchor else "more than three picks"})
             continue
         picks.append({"brick_id": p["brick_id"], "quoted_rule": quote, "why": str(p.get("why", "")).strip()})
     return picks, dropped
@@ -100,6 +152,22 @@ def expected_from_notes(notes: Path, intent: str, known_ids: set[str]) -> tuple[
     return None
 
 
+def lean_from_notes(notes: Path, intent: str) -> tuple[list[str], str | None]:
+    """Read BEFORE the call, as request input only: the `Lean:` chips and `Anchor:` id under this intent's heading. Never the picks."""
+    if not notes.exists():
+        return [], None
+    sections = re.split(r"^## Intent:\s*", notes.read_text(), flags=re.M)[1:]
+    for section in sections:
+        heading, _, body = section.partition("\n")
+        if heading.strip().strip('"') != intent.strip():
+            continue
+        lean = re.search(r"^Lean:\s*(.*)$", body, flags=re.M)
+        anchor = re.search(r"^Anchor:\s*(\S+)\s*$", body, flags=re.M)
+        chips = [c.strip() for c in lean.group(1).split(",") if c.strip() and c.strip().lower() != "none"] if lean else []
+        return chips, (anchor.group(1) if anchor else None)
+    return [], None
+
+
 def slug(intent: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", intent.lower()).strip("-")[:48] or "intent"
 
@@ -114,6 +182,8 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
                    help="sealed notes, read only after the call to score the picks (never sent)")
     p.add_argument("--effort", default=EFFORT, choices=["minimal", "low", "medium", "high", "xhigh", "max"])
     p.add_argument("--max-output-tokens", type=int, default=MAX_OUT)
+    p.add_argument("--lean", default=None, help="comma-separated chips (dark, airy, one accent, text-heavy, big titles, left-aligned, two colors, grid); default: the notes' Lean: line")
+    p.add_argument("--anchor", default=None, help="brick id already chosen by the designer; default: the notes' Anchor: line")
     p.add_argument("--out-dir", type=Path, default=OUT / "propose", help="where <slug>/propose.json lands (default out/propose)")
     p.add_argument("--dry-run", action="store_true", help="print the request and the estimate; send nothing")
     return p.parse_args(argv)
@@ -131,14 +201,24 @@ def main(argv: list[str] | None = None) -> None:
     library = load_library(args.library)
     if not library:
         raise SystemExit(f"no brick with rules in {args.library}")
-    prompt = render_prompt(template, intent, library)
+    chips, anchor = lean_from_notes(args.notes, intent)
+    if args.lean is not None:
+        chips = [c.strip() for c in args.lean.split(",") if c.strip()]
+    if args.anchor is not None:
+        anchor = args.anchor or None
+    if anchor and anchor not in {b["brick_id"] for b in library}:
+        raise SystemExit(f"anchor {anchor} is not a brick in the library")
+    lean_text = render_lean(chips, anchor, library)
+    prompt = render_prompt(template, intent, library, lean_text)
     request = build_request(prompt, schema, args.effort, args.max_output_tokens)
 
     client = Client(dry_run=args.dry_run)
     client.reserve(1)
     typical, worst = costs.estimate_spark([], len(prompt) + len(json.dumps(schema)), args.max_output_tokens)
     print(f"1 text request to {MODEL}; {len(library)} bricks, {sum(len(b['rules']) for b in library)} rules, "
-          f"{len(prompt):,} prompt chars; effort={args.effort}")
+          f"{len(prompt):,} prompt chars; effort={args.effort}; lean={chips or 'none'}; anchor={anchor or 'none'}")
+    if lean_text:
+        print("  lean text:" + lean_text.replace("\n\n", "\n    "))
     costs.print_estimate(MODEL, typical, worst)
     if not args.dry_run:
         costs.check_budget(costs.cost_usd(MODEL, worst))
@@ -152,7 +232,8 @@ def main(argv: list[str] | None = None) -> None:
         return
     usage = costs.Usage.from_response(result.body)
     status = result.body.get("status", "")
-    notes = f"effort={args.effort}; bricks={len(library)}" + ("" if status == "completed" else f"; status={status}")
+    notes = (f"effort={args.effort}; bricks={len(library)}" + (f"; lean={'+'.join(chips)}" if chips else "") + (f"; anchor={anchor}" if anchor else "")
+             + ("" if status == "completed" else f"; status={status}"))
     call = costs.record_call(script=SCRIPT, model=MODEL, input_file=str(args.library), prompt_summary=f"propose: {intent[:40]}",
                              result=result, usage=usage, notes=notes + f"; notes={args.notes.name}")
 
@@ -160,7 +241,7 @@ def main(argv: list[str] | None = None) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     text = output_text(result.body)
     report: dict[str, Any] = {"script": SCRIPT, "model": MODEL, "effort": args.effort, "status": status, "intent": intent,
-                              "library": library, "prompt": prompt, "call": call.as_dict()}
+                              "lean": {"chips": chips, "anchor": anchor, "text": lean_text}, "library": library, "prompt": prompt, "call": call.as_dict()}
     try:
         raw = json.loads(text)
         raw_picks = raw["picks"] if isinstance(raw, dict) and isinstance(raw.get("picks"), list) else None
@@ -172,7 +253,7 @@ def main(argv: list[str] | None = None) -> None:
         (out_dir / "propose.json").write_text(json.dumps(report, indent=2, ensure_ascii=False))
         print(f"could not parse model output ({status}): {error}", file=sys.stderr)
         raise SystemExit(3) from None
-    picks, dropped = validate_picks(raw_picks, library)
+    picks, dropped = validate_picks(raw_picks, library, anchor)
     report.update(raw_picks=raw_picks, picks=picks, dropped=dropped)
     sealed = expected_from_notes(args.notes, intent, {b["brick_id"] for b in library})
     if sealed is not None:
