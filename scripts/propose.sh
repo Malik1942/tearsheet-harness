@@ -10,6 +10,8 @@
 #
 # Knobs (environment): EFFORT=low  MAX_OUT=4000  LIBRARY=../bricks/src/fixtures/samples
 #                      PROMPT_FILE=fixtures/prompts/propose.md  SCHEMA_FILE=fixtures/schemas/propose.json
+#                      NOTES=fixtures/propose_notes.md (the sealed set to read intents from and score against)
+#                      OUT_DIR=out/propose (a second set should get its own, e.g. OUT_DIR=out/propose_v2)
 # Only the heading line of each intent is read before a call; the rest of the sealed notes is read after it, to score.
 # An unparseable response does not stop the other intents (exit 1 at the end); an HTTP 4xx stops everything (exit 4).
 set -euo pipefail
@@ -30,7 +32,8 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-NOTES=fixtures/propose_notes.md
+NOTES="${NOTES:-fixtures/propose_notes.md}"
+OUT_DIR="${OUT_DIR:-out/propose}"
 if [ "${#INTENTS[@]}" -eq 0 ]; then
   if [ ! -f "$NOTES" ]; then
     echo "propose: $NOTES not found. Seal it first (docs/PROPOSE.md), or pass intents on the command line for a dry run." >&2
@@ -56,14 +59,14 @@ PY=.venv/bin/python
 
 MODE="dry run"; DRY=(--dry-run)
 if [ "$SEND" -eq 1 ]; then MODE="SENDING"; DRY=(); fi
-echo "propose: ${#INTENTS[@]} intent(s); effort=$EFFORT max_output_tokens=$MAX_OUT; library=$LIBRARY; prompt=$PROMPT_FILE; schema=$SCHEMA_FILE; $MODE"
+echo "propose: ${#INTENTS[@]} intent(s); effort=$EFFORT max_output_tokens=$MAX_OUT; library=$LIBRARY; prompt=$PROMPT_FILE; schema=$SCHEMA_FILE; notes=$NOTES; out=$OUT_DIR; $MODE"
 FAILED=()
 for intent in "${INTENTS[@]}"; do
   echo
   echo "=== $intent ==="
   rc=0
   "$PY" -m meta_eval.propose --intent "$intent" --library "$LIBRARY" --prompt "$PROMPT_FILE" --schema "$SCHEMA_FILE" \
-    --effort "$EFFORT" --max-output-tokens "$MAX_OUT" ${DRY[@]+"${DRY[@]}"} \
+    --effort "$EFFORT" --max-output-tokens "$MAX_OUT" --notes "$NOTES" --out-dir "$OUT_DIR" ${DRY[@]+"${DRY[@]}"} \
     || { rc=$?; echo "propose: '$intent' FAILED (exit $rc)" >&2; FAILED+=("$intent"); }
   if [ "$rc" -eq 4 ]; then echo "propose: HTTP 4xx; stopping before the next intent" >&2; exit 4; fi
 done

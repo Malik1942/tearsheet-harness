@@ -114,6 +114,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
                    help="sealed notes, read only after the call to score the picks (never sent)")
     p.add_argument("--effort", default=EFFORT, choices=["minimal", "low", "medium", "high", "xhigh", "max"])
     p.add_argument("--max-output-tokens", type=int, default=MAX_OUT)
+    p.add_argument("--out-dir", type=Path, default=OUT / "propose", help="where <slug>/propose.json lands (default out/propose)")
     p.add_argument("--dry-run", action="store_true", help="print the request and the estimate; send nothing")
     return p.parse_args(argv)
 
@@ -153,9 +154,9 @@ def main(argv: list[str] | None = None) -> None:
     status = result.body.get("status", "")
     notes = f"effort={args.effort}; bricks={len(library)}" + ("" if status == "completed" else f"; status={status}")
     call = costs.record_call(script=SCRIPT, model=MODEL, input_file=str(args.library), prompt_summary=f"propose: {intent[:40]}",
-                             result=result, usage=usage, notes=notes)
+                             result=result, usage=usage, notes=notes + f"; notes={args.notes.name}")
 
-    out_dir = OUT / "propose" / slug(intent)
+    out_dir = args.out_dir / slug(intent)
     out_dir.mkdir(parents=True, exist_ok=True)
     text = output_text(result.body)
     report: dict[str, Any] = {"script": SCRIPT, "model": MODEL, "effort": args.effort, "status": status, "intent": intent,

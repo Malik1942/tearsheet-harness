@@ -46,3 +46,48 @@ Prompt v3, the propose prompt and schema, the sealed notes. No re-runs. `PROPOSE
 ## Judgment
 
 Left to Malik, as with the gate. Options the record supports: (a) FAIL as sealed, ship Propose off; (b) PASS on attribution, since two of the three misses rest on relations the extraction never produced, and ship Propose on with the hand-pick fallback; (c) a second sealed set written from the extracted rules rather than from the brick descriptions, three more calls (~$0.02).
+
+---
+
+# Run 2, 2026-11-02 19:15 PST: control set v2 (picks written from the extracted rules)
+
+Malik's call after run 1: "修的是测试的弱点，不是功能" (fix the test's weakness, not the feature). `fixtures/propose_notes_v2.md` (sha256 1796f8ff247eb5a9f9a59324295f831dac03cee7997e40c1b9ebef74ecbe7bbe) keeps the three intents and the scoring, but its picks rest only on the 36 extracted rules the proposer sees. Written by the harness session after run 1 (disclosed in the file), sealed before run 2. v1 untouched. Prompt, schema, effort, library unchanged. Results in `out/propose_v2/<slug>/propose.json`.
+
+## Calls
+
+| Intent | Status | Latency | In / out tok | Cost |
+|---|---|---|---|---|
+| Concert log | completed | 4.0 s | 2020 / 717 | $0.0034 |
+| Long-document reader | completed | 19.0 s | 2020 / 1726 | $0.0099 |
+| Cycling computer | completed | 5.2 s | 2020 / 956 | $0.0045 |
+
+Total $0.018 (both runs $0.039). All 9 quoted rules validated, 0 dropped.
+
+## Picks against v2
+
+**1. Concert log.** Sealed: g2, calmmouse, iran tiles; Not: haeckel, mars. Returned: c1 (photo dominant, tiny label), haeckel (edge-to-edge >90%), iran tiles (offset grid). Overlap 1 of 3, and haeckel is on the Not line. **MISS.**
+
+**2. Long-document reader.** Sealed: lissitzky, matthews, iran tiles; Not: haeckel, mars. Returned: calmmouse (headline 2x body), c1 (desaturated grays + one warm hue for marks), g2 (<5% red accent for marks). Overlap 0 of 3. **MISS.**
+
+**3. Cycling computer.** Sealed: mars, lissitzky, calmmouse; Not: bauhaus, haeckel. Returned: mars, lissitzky, calmmouse, same three as run 1, same quoted rules. Overlap 3 of 3. **PASS.**
+
+Overall under v2: 1 of 3 intents. **FAIL** as sealed (needs 2).
+
+## What two runs show together
+
+| Intent | Run 1 | Run 2 | Stable? |
+|---|---|---|---|
+| Concert log | tiles, haeckel, bauhaus | c1, haeckel, tiles | tiles + haeckel both times |
+| Reader | calmmouse, g2, tiles | calmmouse, c1, g2 | calmmouse + g2 both times |
+| Cycling | mars, lissitzky, calmmouse | mars, lissitzky, calmmouse | identical |
+
+The proposer is consistent: five of nine picks repeat across runs and the glance-screen set is identical. Its misses are not noise; they are a stable reading that differs from the designer's:
+- For "a log of many shows", it treats the problem as **density and grid** (coverage, offset modules) and never reaches for the dark-skin accent discipline (g2) or the entry hierarchy (calmmouse).
+- For "a reader where the person marks passages", it anchors on **marks**: a tiny saturated accent on a neutral field (g2, c1) and a headline ratio (calmmouse). It never quotes Lissitzky's "one hue plus black on light ground" or Matthews' "3x headline stepping through small caps", which are the reading-surface and document-hierarchy rules a designer would take.
+- For a **glance screen** its reading and the designer's coincide exactly, twice.
+
+Across six calls: 18 of 18 quoted rules verbatim, no subject matches (no "car" for cycling, no poster for the concert), three different parameters per answer. The honesty constraint holds; the judgment gap is on intents whose product is a list of many entries.
+
+## Status
+
+Propose stays off on Vercel (`PROPOSE_ENABLED` unset); the product picks by hand. Judgment on shipping it on is Malik's.

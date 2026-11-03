@@ -35,7 +35,7 @@ Written before any proposal call is made, by Malik, and not edited afterwards.
 scripts/propose.sh --send
 ```
 
-One call per `## Intent:` heading, in file order; the harness call guard caps a run at three. Each result lands in `out/propose/<intent-slug>/propose.json` with the rendered prompt, the raw picks, the validated picks, the dropped ones with reasons, the call record, and `sealed: { expected, overlap, pass }`. The ledger gets one row per call (`script = propose`).
+One call per `## Intent:` heading, in file order; the harness call guard caps a run at three. A second sealed set gets its own files: `NOTES=fixtures/propose_notes_v2.md OUT_DIR=out/propose_v2 scripts/propose.sh --send` (v2 = the control set written from the extracted rules, run 2026-11-02). Each result lands in `out/propose/<intent-slug>/propose.json` with the rendered prompt, the raw picks, the validated picks, the dropped ones with reasons, the call record, and `sealed: { expected, overlap, pass }`. The ledger gets one row per call (`script = propose`).
 
 No re-runs after a miss: a second attempt on the same intent is a different experiment and is recorded as one.
 

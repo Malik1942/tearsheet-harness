@@ -38,3 +38,6 @@ timestamp,script,model_id,input_file,prompt_summary,images_sent,frames_sent,inpu
 2026-11-03T03:03:39+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A concert log for someone who goes to a ,0,0,2020,1347,7662,0.008250,effort=low; bricks=12; reasoning_tokens=1116
 2026-11-03T03:03:45+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A reader for long documents such as cont,0,0,2020,961,6513,0.006609,effort=low; bricks=12; reasoning_tokens=774
 2026-11-03T03:04:08+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A cycling computer screen for glancing a,0,0,2020,928,22739,0.006469,effort=low; bricks=12; reasoning_tokens=705
+2026-11-03T03:15:27+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A concert log for someone who goes to a ,0,0,2020,717,3988,0.003447,effort=low; bricks=12; notes=propose_notes_v2.md; reasoning_tokens=510
+2026-11-03T03:15:46+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A reader for long documents such as cont,0,0,2020,1726,19020,0.009860,effort=low; bricks=12; notes=propose_notes_v2.md; reasoning_tokens=1531
+2026-11-03T03:15:51+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A cycling computer screen for glancing a,0,0,2020,956,5154,0.004463,effort=low; bricks=12; notes=propose_notes_v2.md; reasoning_tokens=737
