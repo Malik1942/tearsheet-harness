@@ -1,0 +1,12 @@
+.env
+.venv/
+out/*
+!out/REPORT.md
+__pycache__/
+.ruff_cache/
+# gate run material: downloaded probe images and anything derived from them never enter the public repo
+fixtures/images/*
+!fixtures/images/_placeholder.jpg
+docs/overlays/
+runs/
+.DS_Store

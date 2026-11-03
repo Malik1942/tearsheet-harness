@@ -1,0 +1,34 @@
+{
+  "title": "ProposeResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "picks"
+  ],
+  "properties": {
+    "picks": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "brick_id",
+          "quoted_rule",
+          "why"
+        ],
+        "properties": {
+          "brick_id": {
+            "type": "string"
+          },
+          "quoted_rule": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

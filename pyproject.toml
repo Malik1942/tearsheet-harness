@@ -1,0 +1,16 @@
+[project]
+name = "meta-eval"
+version = "0.1.0"
+description = "Cost-accounted test harness for Meta Model API (SAM 3.1 + Muse Spark vision)"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "opencv-contrib-python>=4.10",
+    "Pillow>=10.4",
+    "numpy>=1.26",
+    "meta-sam-parser>=0.1.0",
+]
+
+[tool.uv]
+package = false

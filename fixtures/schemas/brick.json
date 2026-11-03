@@ -1,0 +1,147 @@
+{
+  "title": "BrickExtraction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "measurements",
+    "hypotheses",
+    "transferable_relations",
+    "fragile_if_changed",
+    "regions"
+  ],
+  "properties": {
+    "measurements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "statement",
+          "value",
+          "how_measured"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "how_measured": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "statement",
+          "rests_on",
+          "confidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "rests_on": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "transferable_relations": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule",
+          "parameter",
+          "target",
+          "source_hypothesis"
+        ],
+        "properties": {
+          "rule": {
+            "type": "string"
+          },
+          "parameter": {
+            "type": "string",
+            "enum": [
+              "type_scale_ratio",
+              "hierarchy_mode",
+              "density",
+              "grouping",
+              "rhythm",
+              "alignment_edge",
+              "image_text_dominance",
+              "accent_placement",
+              "accent_coverage",
+              "palette_hue_count",
+              "none"
+            ]
+          },
+          "target": {
+            "type": "string"
+          },
+          "source_hypothesis": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "fragile_if_changed": {
+      "type": "string"
+    },
+    "regions": {
+      "type": "array",
+      "description": "0-1000 normalized boxes for the regions the measurements refer to",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "box_1000",
+          "measurement_ids"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "box_1000": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "measurement_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

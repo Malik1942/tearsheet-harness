@@ -1,0 +1,40 @@
+timestamp,script,model_id,input_file,prompt_summary,images_sent,frames_sent,input_tokens,output_tokens,latency_ms,est_cost_usd,notes
+2026-11-02T21:15:58+00:00,spark_vision,muse-spark-1.3,fixtures/images/_smoke.jpg,schema BrickExtraction,1,0,3381,3098,15296,0.017393,task=describe-json; effort=medium; reasoning_tokens=2076
+2026-11-02T21:17:03+00:00,spark_vision,muse-spark-1.3,fixtures/images/g1.jpg,schema BrickExtraction,1,0,4121,1784,11323,0.012733,task=describe-json; effort=medium; reasoning_tokens=875
+2026-11-02T21:17:29+00:00,spark_vision,muse-spark-1.3,fixtures/images/g2.jpg,schema BrickExtraction,1,0,4121,4105,24599,0.022597,task=describe-json; effort=medium; reasoning_tokens=3065
+2026-11-02T21:17:50+00:00,spark_vision,muse-spark-1.3,fixtures/images/g3.jpg,schema BrickExtraction,1,0,4072,3738,21092,0.020976,task=describe-json; effort=medium; reasoning_tokens=2592
+2026-11-02T21:18:27+00:00,spark_vision,muse-spark-1.3,fixtures/images/p7.jpg,schema BrickExtraction,1,0,981,4218,26289,0.019153,task=describe-json; effort=medium; reasoning_tokens=3022
+2026-11-02T21:18:56+00:00,spark_vision,muse-spark-1.3,fixtures/images/p1.jpg,schema BrickExtraction,1,0,4121,2458,14532,0.015598,task=describe-json; effort=medium; reasoning_tokens=1508
+2026-11-02T21:19:13+00:00,spark_vision,muse-spark-1.3,fixtures/images/p2.jpg,schema BrickExtraction,1,0,711,3059,16204,0.013352,task=describe-json; effort=medium; reasoning_tokens=1994
+2026-11-02T21:19:29+00:00,spark_vision,muse-spark-1.3,fixtures/images/p3.jpg,schema BrickExtraction,1,0,591,3176,16236,0.014237,task=describe-json; effort=medium; reasoning_tokens=2231
+2026-11-02T21:19:41+00:00,spark_vision,muse-spark-1.3,fixtures/images/p4.jpg,schema BrickExtraction,1,0,4145,2305,10760,0.014977,task=describe-json; effort=medium; reasoning_tokens=1393
+2026-11-02T21:19:52+00:00,spark_vision,muse-spark-1.3,fixtures/images/p5.jpg,schema BrickExtraction,1,0,3488,2150,10453,0.012960,task=describe-json; effort=medium; reasoning_tokens=1172
+2026-11-02T21:20:13+00:00,spark_vision,muse-spark-1.3,fixtures/images/p6.jpg,schema BrickExtraction,1,0,3488,3468,20938,0.018561,task=describe-json; effort=medium; reasoning_tokens=2368
+2026-11-03T00:28:32+00:00,spark_vision,muse-spark-1.3,fixtures/images/g1.jpg,schema BrickExtraction,1,0,4334,3144,29308,0.018780,task=describe-json; effort=medium; reasoning_tokens=2068
+2026-11-03T00:28:59+00:00,spark_vision,muse-spark-1.3,fixtures/images/g2.jpg,schema BrickExtraction,1,0,4334,2452,26448,0.015838,task=describe-json; effort=medium; reasoning_tokens=1433
+2026-11-03T00:29:34+00:00,spark_vision,muse-spark-1.3,fixtures/images/g3.jpg,schema BrickExtraction,1,0,4285,3333,33145,0.018843,task=describe-json; effort=medium; reasoning_tokens=2339
+2026-11-03T00:32:14+00:00,spark_vision,muse-spark-1.3,fixtures/images/g1.jpg,schema BrickExtraction,1,0,4191,2560,28048,0.016119,task=describe-json; effort=medium; reasoning_tokens=1600
+2026-11-03T00:32:51+00:00,spark_vision,muse-spark-1.3,fixtures/images/g2.jpg,schema BrickExtraction,1,0,4191,3542,36089,0.020292,task=describe-json; effort=medium; reasoning_tokens=2546
+2026-11-03T00:33:31+00:00,spark_vision,muse-spark-1.3,fixtures/images/g3.jpg,schema BrickExtraction,1,0,4142,3675,38891,0.020796,task=describe-json; effort=medium; reasoning_tokens=2377
+2026-11-03T01:13:02+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_g1.jpg,schema BrickExtraction,1,0,4191,4008,44209,0.022273,task=describe-json; effort=medium; reasoning_tokens=2982
+2026-11-03T01:13:33+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_g2.jpg,schema BrickExtraction,1,0,4191,2628,30533,0.016408,task=describe-json; effort=medium; reasoning_tokens=1433
+2026-11-03T01:14:02+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_calmmouse.jpg,schema BrickExtraction,1,0,1489,2746,28419,0.013532,task=describe-json; effort=medium; reasoning_tokens=1887
+2026-11-03T01:14:51+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_greencar.jpg,schema BrickExtraction,1,0,4191,4405,48432,0.023960,task=describe-json; effort=medium; reasoning_tokens=3364
+2026-11-03T01:15:31+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_c1.jpg,schema BrickExtraction,1,0,3451,3655,39110,0.019310,task=describe-json; effort=medium; reasoning_tokens=2675
+2026-11-03T01:32:19+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_bauhaus-1923-staatliches-bauhaus-weimar.jpg,schema BrickExtraction,1,0,4597,3432,40519,0.020332,task=describe-json; effort=medium; reasoning_tokens=2604
+2026-11-03T01:32:50+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_haeckel-1904-trochilidae-plate-99.jpg,schema BrickExtraction,1,0,4361,2624,30099,0.016603,task=describe-json; effort=medium; reasoning_tokens=1601
+2026-11-03T01:33:20+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_iran-1260s-star-cross-luster-tiles.jpg,schema BrickExtraction,1,0,4381,2620,29291,0.016073,task=describe-json; effort=medium; reasoning_tokens=1601
+2026-11-03T01:33:49+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_matthews-19c-glyphography-trade-card.jpg,schema BrickExtraction,1,0,4413,2528,28425,0.016260,task=describe-json; effort=medium; reasoning_tokens=1413
+2026-11-03T01:34:25+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_lissitzky-1923-dlya-golosa.jpg,schema BrickExtraction,1,0,4413,3275,35824,0.018897,task=describe-json; effort=medium; reasoning_tokens=2320
+2026-11-03T01:35:04+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_secession-1902-beethoven-catalogue.jpg,schema BrickExtraction,1,0,4636,3144,37568,0.019157,task=describe-json; effort=medium; reasoning_tokens=2137
+2026-11-03T01:35:36+00:00,spark_vision,muse-spark-1.3,fixtures/images/s_jpl-2016-visions-mars.jpg,schema BrickExtraction,1,0,4191,2913,31394,0.017619,task=describe-json; effort=medium; reasoning_tokens=1881
+2026-11-03T01:57:59+00:00,sam_image,sam-3.1,fixtures/images/_placeholder.jpg,resistor,1,0,0,0,1012,0.002500,
+2026-11-03T01:58:24+00:00,sam_image,sam-3.1,fixtures/images/_placeholder.jpg,red circle,1,0,0,0,412,0.002500,
+2026-11-03T01:58:24+00:00,sam_image,sam-3.1,fixtures/images/_placeholder.jpg,box#1,1,0,0,0,367,0.002500,
+2026-11-03T01:58:49+00:00,spark_vision,muse-spark-1.3,fixtures/images/_placeholder.jpg,"red dot,tan rectangle",1,0,1503,717,6386,0.004926,task=locate; effort=low; reasoning_tokens=528
+2026-11-03T02:00:13+00:00,sam_video,files,fixtures/videos/_placeholder.mp4,upload,0,0,0,0,1675,0.000000,7760 bytes
+2026-11-03T02:00:16+00:00,sam_video,sam-3.1,fixtures/videos/_placeholder.mp4,orange ball,0,50,0,0,2758,0.010000,
+2026-11-03T02:00:45+00:00,sam_video,sam-3.1,fixtures/videos/_placeholder.mp4,orange circle,0,50,0,0,3591,0.010000,
+2026-11-03T03:03:39+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A concert log for someone who goes to a ,0,0,2020,1347,7662,0.008250,effort=low; bricks=12; reasoning_tokens=1116
+2026-11-03T03:03:45+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A reader for long documents such as cont,0,0,2020,961,6513,0.006609,effort=low; bricks=12; reasoning_tokens=774
+2026-11-03T03:04:08+00:00,propose,muse-spark-1.3,../bricks/src/fixtures/samples,propose: A cycling computer screen for glancing a,0,0,2020,928,22739,0.006469,effort=low; bricks=12; reasoning_tokens=705
